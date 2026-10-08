@@ -5,9 +5,9 @@
 -- Compatible with MySQL 5.7+ / 8.0+ / MariaDB (XAMPP)
 -- ========================================================
 
--- Create database if not exists
-CREATE DATABASE IF NOT EXISTS `expense_manager` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `expense_manager`;
+-- For shared hosting (InfinityFree/cPanel), select your created database in phpMyAdmin, then import:
+-- CREATE DATABASE IF NOT EXISTS `expense_manager` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE `expense_manager`;
 
 -- --------------------------------------------------------
 -- Table structure for `users`
