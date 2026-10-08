@@ -12,9 +12,22 @@ requireLogin();
 $userId = getCurrentUserId();
 $txnId = (int)($_POST['transaction_id'] ?? $_GET['id'] ?? 0);
 
+$prefix = (strpos($_SERVER['SCRIPT_NAME'] ?? '', '/actions/') !== false) ? '../' : '';
+
+// Determine redirect destination (default to transactions.php or safe referrer)
+$redirectPage = 'transactions.php';
+if (!empty($_SERVER['HTTP_REFERER'])) {
+    $refererPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+    $refererFile = basename($refererPath);
+    if (in_array($refererFile, ['dashboard.php', 'transactions.php', 'reports.php'])) {
+        $refererQuery = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY);
+        $redirectPage = $refererFile . ($refererQuery ? '?' . $refererQuery : '');
+    }
+}
+
 if ($txnId <= 0) {
     setFlash('error', "Invalid transaction ID.");
-    header("Location: ../transactions.php");
+    header("Location: " . $prefix . $redirectPage);
     exit();
 }
 
@@ -36,5 +49,5 @@ try {
     setFlash('error', "Failed to delete transaction due to database error.");
 }
 
-header("Location: ../transactions.php");
+header("Location: " . $prefix . $redirectPage);
 exit();

@@ -9,14 +9,16 @@ require_once __DIR__ . '/../includes/auth.php';
 
 requireLogin();
 
+$prefix = (strpos($_SERVER['SCRIPT_NAME'] ?? '', '/actions/') !== false) ? '../' : '';
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../budget.php");
+    header("Location: " . $prefix . "budget.php");
     exit();
 }
 
 if (!verifyCSRFToken($_POST['csrf_token'] ?? null)) {
     setFlash('error', "Security verification failed. Please try again.");
-    header("Location: ../budget.php");
+    header("Location: " . $prefix . "budget.php");
     exit();
 }
 
@@ -31,7 +33,7 @@ try {
         $stmt = $pdo->prepare("DELETE FROM budgets WHERE budget_id = ? AND user_id = ?");
         $stmt->execute([$budgetId, $userId]);
         setFlash('success', "Budget limit removed successfully.");
-        header("Location: ../budget.php");
+        header("Location: " . $prefix . "budget.php");
         exit();
     }
 
@@ -43,7 +45,7 @@ try {
 
     if ($categoryId <= 0 || $amount <= 0 || $month < 1 || $month > 12 || $year < 2000) {
         setFlash('error', "Please provide a valid category, positive amount, month, and year.");
-        header("Location: ../budget.php");
+        header("Location: " . $prefix . "budget.php");
         exit();
     }
 
@@ -55,12 +57,12 @@ try {
     $stmt->execute([$userId, $categoryId, $amount, $month, $year]);
 
     setFlash('success', "Budget of ₹" . number_format($amount, 2) . " successfully saved for " . date('F Y', mktime(0, 0, 0, $month, 10, $year)) . ".");
-    header("Location: ../budget.php?month=" . $month . "&year=" . $year);
+    header("Location: " . $prefix . "budget.php?month=" . $month . "&year=" . $year);
     exit();
 
 } catch (PDOException $e) {
     error_log("Budget action error: " . $e->getMessage());
     setFlash('error', "Unable to update budget limit. Database error.");
-    header("Location: ../budget.php");
+    header("Location: " . $prefix . "budget.php");
     exit();
 }

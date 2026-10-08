@@ -25,7 +25,8 @@ function isLoggedIn(): bool {
 function requireLogin(): void {
     if (!isLoggedIn()) {
         $_SESSION['flash_error'] = "Please log in to access this page.";
-        header("Location: login.php");
+        $prefix = (strpos($_SERVER['SCRIPT_NAME'] ?? '', '/actions/') !== false) ? '../' : '';
+        header("Location: " . $prefix . "login.php");
         exit();
     }
 }
@@ -36,7 +37,8 @@ function requireLogin(): void {
  */
 function requireGuest(): void {
     if (isLoggedIn()) {
-        header("Location: dashboard.php");
+        $prefix = (strpos($_SERVER['SCRIPT_NAME'] ?? '', '/actions/') !== false) ? '../' : '';
+        header("Location: " . $prefix . "dashboard.php");
         exit();
     }
 }
